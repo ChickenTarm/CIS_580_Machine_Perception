@@ -1,0 +1,26 @@
+\documentclass[english]{article}
+
+\input{util}
+
+%% WHETHER OR NOT SOLUTIONS ARE ENABLED %%
+\setboolean{ShowSolutions}{true}
+
+\title{CIS 580, Machine Perception, Spring 2018: Assignment 3
+\ifthenelse{\boolean{ShowSolutions}}{ \\ \bf Solutions }{} }
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{itemize}
+\item This is an individual homework.% and is worth 100 points.
+\item You must submit your solutions online on \href{https://gradescope.com/courses/14413}{Gradescope}, the entry code for which is MKYGP8. We recommend that you use \LaTeX, but we will accept scanned solutions as well.
+\item The following files must be submitted via turnin: \verb|gaussian1d.m|, \verb|gaussian2d.m|, \verb|gaborFilter1D.m|,  \verb|gaborFilter2D.m|, \verb|dog1d.m|.
+  We provide a few tests; use \verb|run test/run_tests| to run them.
+  Please make sure that the given tests are passing before submitting your work.
+\item Start early! If you get stuck, please post your questions on \href{https://piazza.com/class/jcamop0erj15o0}{Piazza} or come to office hours!
+\end{itemize}
+
+\vspace{1cm}
+\input{problem_set}
+\end{document}

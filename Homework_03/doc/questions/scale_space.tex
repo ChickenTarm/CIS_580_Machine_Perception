@@ -1,0 +1,56 @@
+\section{Scale invariant detection}
+In this section, we will implement a scale-invariant blob detector that produces results as in figure \ref{blob_detection}: we will recursively apply a DoG filter to the initial image to build a 3D-matrix of responses, and we will then find local maxima in position and scale. 
+
+\begin{figure}[ht!]
+  \begin{center}
+    \includegraphics[width = \textwidth]{images/blob_detection.pdf}
+  \end{center}
+  \caption{\label{blob_detection} Scale-invariant blob detection example.}
+\end{figure}
+
+
+\begin{enumerate}
+\item \textbf{Approximating a LoG by a DoG}
+
+  In this section we will experiment with approximating a Laplacian of Gaussian filter by a Difference of Gaussians. To build the intuition we will reason in 1D, i.e\ with a section of the filter. %The only file you need to complete and run is \verb!DoG_script.m!.
+  \begin{enumerate}
+  \item \points{7} We want to compute and plot a LoG filter, as well as its approximation by DoG filters. Remember the following:
+  $$\text{LoG}_{\sigma} = \frac{1}{(k-1)\s^2}\text{DoG}_{\sigma},\quad \text{where }\; \text{DoG}_{\sigma} = G_{k\sigma} - G_{\sigma}$$
+  
+  In \verb!DoG_script.m!, we will try several values of k in \verb!k_range!. Complete \verb!dog1d.m! and \verb!DoG_script.m!. Quickly comment on the plots you obtain.
+
+  \item \points{2} Explain why you could expect the DoG to get closer to the LoG as $k$ tends to 1. (Remark: Note that in practice, when building a scale space using DoG, we prefer using $k=\sqrt{2}$)
+  \item \points{2} In practice, when building the scale space, we intentionally forget the normalizing factor $\frac{1}{(k-1)\s^2}$ and just use the differences of Gaussians. Explain why.
+  \end{enumerate}
+
+  
+\item \textbf{Detecting sunflowers}
+
+  The LoG filter in 2D is a rotationally symmetric version of the 1D filter we worked with in the previous question (the famous ``mexican hat''). Because of its shape, it makes a good blob detector (a blob is a dark patch on light background). We don't know the size of the blobs to detect a priori, so we build a scale space by applying the filter with wider and wider $\s$. In practice we will approximate the LoG by a DoG. We will implement a simple (but inefficient) version where we do not downsample the image when blurring it.
+
+
+  \begin{enumerate}
+\item \textbf{Preliminaries}
+
+  In this section the only file you need to complete and run is \verb!blob_script.m!. Make sure you:
+  \begin{itemize}
+  \item change the two paths at the beginning of the file: one is for the image, the other for a function \verb!minmaxfilt! used to find local maxima/minima in an $n$-dimensional array.
+  \item run \verb!minmaxfilter_install.m! in \verb!MinMaxFilterFolder!, to compile the mex files for your platform. (The homework kit already includes compiled mex files for 64-bit Linux, so you can skip this step if you're using that platform)
+  \end{itemize}
+
+  \item \points{7} Complete the part of \verb!blob_script.m! that builds the 3D matrix \verb!scales!. Each slice \verb!scales(:,:,i)! contains the original image, blurred by a simple Gaussian filter of parameter \verb!sigma_i = sigma * k^(i-1)!. 
+
+    \textbf{Important}: we exploit the fact that the 2D Gaussian filter is separable. Instead of convolving the image with a 2D Gaussian, build a 1D Gaussian filter \verb!g_i! (using \verb!gaussian1d.m!), convolve the image with \verb!g_i! and then with \verb!g_i'! (transpose of \verb!g_i!): this has the same effect as convolving with the 2D filter but is more efficient.
+  \item \points{7} Complete the part of \verb!blob_script.m! that filters the local maxima in the scale space according to their response. Here we want to keep only points $(x,y,\s)$ that have a response higher than 50\% of the maximum response accross the whole 3D scale space.
+  \item \points{3} The radius of a detected blob corresponds to $\sqrt{2}$ times the detected scale: complete the formula for the radius \verb!r! of each detection, at the end of \verb!blob_script.m!, in order to plot the detections as circles of detected radius on top of the image. \verb!r! depends on \verb!sigma!, \verb!k!, and the detected scale (use \verb!smax!).
+  \item \points{7} Show your detection results for the image \verb!sunflowers.jpg! and for another image of your choice containing blobs at various scales. Remark: In case you wonder how to detect white blobs on a dark background, take the local minima instead of local maxima.
+  \end{enumerate}
+  
+\end{enumerate}
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "../hw3"
+%%% End: 
